@@ -1,0 +1,248 @@
+cmake_minimum_required(VERSION 3.10)
+project(MetaNN_book)
+
+# set(CMAKE_UNITY_BUILD ON)
+set(CMAKE_CXX_STANDARD 17)
+# SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -O0 -Wall -g -ggdb")
+if(("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang") OR ("${CMAKE_CXX_COMPILER_ID}"
+                                                     STREQUAL "GNU"))
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fexceptions -O2 -I.. ")
+  set(CMAKE_EXE_LINKER_FLAGS " -no-pie")
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Ot /arch:AVX2")
+  # using Visual Studio C++
+endif()
+
+include_directories(.)
+include_directories(MetaNN)
+include_directories(MetaNN/data)
+include_directories(MetaNN/data/batch)
+include_directories(MetaNN/data/facilities)
+include_directories(MetaNN/data/matrices)
+include_directories(MetaNN/data_copy)
+include_directories(MetaNN/evaluate)
+include_directories(MetaNN/evaluate/cpu)
+include_directories(MetaNN/evaluate/facilities)
+include_directories(MetaNN/facilities)
+include_directories(MetaNN/layers)
+include_directories(MetaNN/layers/compose)
+include_directories(MetaNN/layers/cost)
+include_directories(MetaNN/layers/elementary)
+include_directories(MetaNN/layers/facilities)
+include_directories(MetaNN/layers/recurrent)
+include_directories(MetaNN/model_rel)
+include_directories(MetaNN/model_rel/grad_col)
+include_directories(MetaNN/model_rel/param_initializer)
+include_directories(MetaNN/model_rel/param_initializer/facilities)
+include_directories(MetaNN/operators)
+include_directories(MetaNN/operators/facilities)
+include_directories(MetaNN/policies)
+include_directories(Test)
+include_directories(Test/data)
+include_directories(Test/evaluate)
+include_directories(Test/facilities)
+include_directories(Test/layers)
+include_directories(Test/layers/compose)
+include_directories(Test/layers/cost)
+include_directories(Test/layers/elementary)
+include_directories(Test/layers/recurrent)
+include_directories(Test/model_rel)
+include_directories(Test/model_rel/param_initializer)
+include_directories(Test/operators)
+include_directories(Test/policies)
+
+set(MODULE_TEST_SRC
+    MetaNN/data/batch/array.h
+    MetaNN/data/batch/batch.h
+    MetaNN/data/batch/duplicate.h
+    MetaNN/data/batch/matrix.h
+    MetaNN/data/batch/scalar.h
+    MetaNN/data/facilities/allocators.h
+    MetaNN/data/facilities/continuous_memory.h
+    MetaNN/data/facilities/lower_access.h
+    MetaNN/data/facilities/tags.h
+    MetaNN/data/facilities/traits.h
+    MetaNN/data/matrices/cpu_matrix.h
+    MetaNN/data/matrices/matrices.h
+    MetaNN/data/matrices/one_hot_vector.h
+    MetaNN/data/matrices/trival_matrix.h
+    MetaNN/data/matrices/zero_matrix.h
+    MetaNN/data/dynamic.h
+    MetaNN/data/scalar.h
+    MetaNN/data_copy/data_copy.h
+    MetaNN/evaluate/cpu/trival_eval_pool.h
+    MetaNN/evaluate/facilities/eval_buffer.h
+    MetaNN/evaluate/facilities/eval_group.h
+    MetaNN/evaluate/facilities/eval_handle.h
+    MetaNN/evaluate/facilities/eval_plan.h
+    MetaNN/evaluate/facilities/eval_pool.h
+    MetaNN/evaluate/facilities/eval_unit.h
+    MetaNN/facilities/null_param.h
+    MetaNN/facilities/traits.h
+    MetaNN/facilities/var_type_dict.h
+    MetaNN/layers/compose/compose_kernel.h
+    MetaNN/layers/compose/linear_layer.h
+    MetaNN/layers/compose/single_layer.h
+    MetaNN/layers/cost/negative_log_likelihood_layer.h
+    MetaNN/layers/elementary/abs_layer.h
+    MetaNN/layers/elementary/add_layer.h
+    MetaNN/layers/elementary/bias_layer.h
+    MetaNN/layers/elementary/element_mul_layer.h
+    MetaNN/layers/elementary/interpolate_layer.h
+    MetaNN/layers/elementary/sigmoid_layer.h
+    MetaNN/layers/elementary/softmax_layer.h
+    MetaNN/layers/elementary/tanh_layer.h
+    MetaNN/layers/elementary/weight_layer.h
+    MetaNN/layers/facilities/common_io.h
+    MetaNN/layers/facilities/interface_fun.h
+    MetaNN/layers/facilities/policies.h
+    MetaNN/layers/facilities/traits.h
+    MetaNN/layers/recurrent/gru_step.h
+    MetaNN/layers/recurrent/recurrent_layer.h
+    MetaNN/model_rel/grad_col/grad_collector.h
+    MetaNN/model_rel/param_initializer/facilities/fill_with_spec_dist.h
+    MetaNN/model_rel/param_initializer/facilities/policies.h
+    MetaNN/model_rel/param_initializer/facilities/traits.h
+    MetaNN/model_rel/param_initializer/constant_filler.h
+    MetaNN/model_rel/param_initializer/gaussian_filler.h
+    MetaNN/model_rel/param_initializer/param_initializer.h
+    MetaNN/model_rel/param_initializer/uniform_filler.h
+    MetaNN/model_rel/param_initializer/var_scale_filler.h
+    MetaNN/operators/facilities/category_cal.h
+    MetaNN/operators/facilities/oper_seq.h
+    MetaNN/operators/facilities/organizer.h
+    MetaNN/operators/facilities/tags.h
+    MetaNN/operators/facilities/traits.h
+    MetaNN/operators/abs.h
+    MetaNN/operators/add.h
+    MetaNN/operators/collapse.h
+    MetaNN/operators/divide.h
+    MetaNN/operators/dot.h
+    MetaNN/operators/element_mul.h
+    MetaNN/operators/interpolate.h
+    MetaNN/operators/negative_log_likelihood.h
+    MetaNN/operators/negative_log_likelihood_derivative.h
+    MetaNN/operators/operators.h
+    MetaNN/operators/sigmoid.h
+    MetaNN/operators/sigmoid_derivative.h
+    MetaNN/operators/sign.h
+    MetaNN/operators/softmax.h
+    MetaNN/operators/softmax_derivative.h
+    MetaNN/operators/substract.h
+    MetaNN/operators/tanh.h
+    MetaNN/operators/tanh_derivative.h
+    MetaNN/operators/transpose.h
+    MetaNN/policies/change_policy.h
+    MetaNN/policies/inject_policy.h
+    MetaNN/policies/policy_container.h
+    MetaNN/policies/policy_macro_begin.h
+    MetaNN/policies/policy_macro_end.h
+    MetaNN/policies/policy_operations.h
+    MetaNN/policies/policy_selector.h
+    MetaNN/meta_nn.h
+    Test/data/test_array.cpp
+    Test/data/test_array.h
+    Test/data/test_batch_matrix.cpp
+    Test/data/test_batch_matrix.h
+    Test/data/test_batch_scalar.cpp
+    Test/data/test_batch_scalar.h
+    Test/data/test_duplicate.cpp
+    Test/data/test_duplicate.h
+    Test/data/test_general_matrix.cpp
+    Test/data/test_general_matrix.h
+    Test/data/test_one_hot_vector.cpp
+    Test/data/test_one_hot_vector.h
+    Test/data/test_scalar.cpp
+    Test/data/test_scalar.h
+    Test/data/test_trival_matrix.cpp
+    Test/data/test_trival_matrix.h
+    Test/data/test_zero_matrix.cpp
+    Test/data/test_zero_matrix.h
+    Test/evaluate/test_eval_plan.cpp
+    Test/evaluate/test_eval_plan.h
+    Test/facilities/calculate_tags.h
+    Test/facilities/data_gen.h
+    Test/facilities/test_var_type_dict.cpp
+    Test/facilities/test_var_type_dict.h
+    Test/layers/compose/test_compose_kernel.cpp
+    Test/layers/compose/test_compose_kernel.h
+    Test/layers/compose/test_linear_layer.cpp
+    Test/layers/compose/test_linear_layer.h
+    Test/layers/compose/test_single_layer.cpp
+    Test/layers/compose/test_single_layer.h
+    Test/layers/cost/test_negative_log_likelihood_layer.cpp
+    Test/layers/cost/test_negative_log_likelihood_layer.h
+    Test/layers/elementary/test_abs_layer.cpp
+    Test/layers/elementary/test_abs_layer.h
+    Test/layers/elementary/test_add_layer.cpp
+    Test/layers/elementary/test_add_layer.h
+    Test/layers/elementary/test_bias_layer.cpp
+    Test/layers/elementary/test_bias_layer.h
+    Test/layers/elementary/test_element_mul_layer.cpp
+    Test/layers/elementary/test_element_mul_layer.h
+    Test/layers/elementary/test_interpolate_layer.cpp
+    Test/layers/elementary/test_interpolate_layer.h
+    Test/layers/elementary/test_sigmoid_layer.cpp
+    Test/layers/elementary/test_sigmoid_layer.h
+    Test/layers/elementary/test_softmax_layer.cpp
+    Test/layers/elementary/test_softmax_layer.h
+    Test/layers/elementary/test_tanh_layer.cpp
+    Test/layers/elementary/test_tanh_layer.h
+    Test/layers/elementary/test_weight_layer.cpp
+    Test/layers/elementary/test_weight_layer.h
+    Test/layers/recurrent/test_gru.cpp
+    Test/layers/recurrent/test_gru.h
+    Test/layers/recurrent/test_gru_2.cpp
+    Test/layers/recurrent/test_gru_2.h
+    Test/model_rel/param_initializer/test_constant_filler.cpp
+    Test/model_rel/param_initializer/test_constant_filler.h
+    Test/model_rel/param_initializer/test_gaussian_filler.cpp
+    Test/model_rel/param_initializer/test_gaussian_filler.h
+    Test/model_rel/param_initializer/test_var_scale_filter.cpp
+    Test/model_rel/param_initializer/test_var_scale_filter.h
+    Test/operators/test_abs.cpp
+    Test/operators/test_abs.h
+    Test/operators/test_add.cpp
+    Test/operators/test_add.h
+    Test/operators/test_collapse.cpp
+    Test/operators/test_collapse.h
+    Test/operators/test_divide.cpp
+    Test/operators/test_divide.h
+    Test/operators/test_dot.cpp
+    Test/operators/test_dot.h
+    Test/operators/test_element_mul.cpp
+    Test/operators/test_element_mul.h
+    Test/operators/test_interpolate.cpp
+    Test/operators/test_interpolate.h
+    Test/operators/test_negative_log_likelihood.cpp
+    Test/operators/test_negative_log_likelihood.h
+    Test/operators/test_negative_log_likelihood_derivative.cpp
+    Test/operators/test_negative_log_likelihood_derivative.h
+    Test/operators/test_sigmoid.cpp
+    Test/operators/test_sigmoid.h
+    Test/operators/test_sigmoid_derivative.cpp
+    Test/operators/test_sigmoid_derivative.h
+    Test/operators/test_sign.cpp
+    Test/operators/test_sign.h
+    Test/operators/test_softmax.cpp
+    Test/operators/test_softmax.h
+    Test/operators/test_softmax_derivative.cpp
+    Test/operators/test_softmax_derivative.h
+    Test/operators/test_substract.cpp
+    Test/operators/test_substract.h
+    Test/operators/test_tanh.cpp
+    Test/operators/test_tanh.h
+    Test/operators/test_tanh_derivative.cpp
+    Test/operators/test_tanh_derivative.h
+    Test/operators/test_transpose.cpp
+    Test/operators/test_transpose.h
+    Test/policies/test_change_policy.cpp
+    Test/policies/test_change_policy.h
+    Test/policies/test_policy_operations.cpp
+    Test/policies/test_policy_operations.h
+    Test/policies/test_policy_selector.cpp
+    Test/policies/test_policy_selector.h)
+
+set(TEST_SRC Test/main.cpp)
+
+add_executable(${PROJECT_NAME} ${TEST_SRC} ${MODULE_TEST_SRC})

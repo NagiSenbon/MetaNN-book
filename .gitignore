@@ -1,2 +1,7 @@
 /Test/bin
 /Test/obj
+
+/cmake-build-debug/
+/build/
+/.idea/
+/.vscode/

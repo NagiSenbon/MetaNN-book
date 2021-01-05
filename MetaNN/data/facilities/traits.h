@@ -1,6 +1,7 @@
 #pragma once
 #include <MetaNN/data/facilities/tags.h>
 #include <type_traits>
+#include <iterator>
 
 namespace MetaNN
 {
@@ -145,10 +146,10 @@ template <typename T>
 struct IsIterator_
 {   
     template <typename R>
-    static std::true_type Test(typename std::iterator_traits<R>::iterator_category*);
+    static std::true_type Test(typename std::iterator_traits<R>::iterator_category*) {};
     
     template <typename R>
-    static std::false_type Test(...);
+    static std::false_type Test(...) {};
 
     static constexpr bool value = decltype(Test<T>(nullptr))::value;
 };
